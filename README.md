@@ -1,13 +1,20 @@
-![Logo PREDICT4ALL](/res/logos/predict4all.png)
-
-![Logo Partenaires](/res/logos/partners.png)
+<p align="center">
+  <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/predict4all.png">
+</p>
+<p align="center">
+  <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/partners.png">
+</p>
 
 SIBYLLE - PREDICT4ALL - light and simple next word prediction library
 ==============================================
 
 [![mvn](https://img.shields.io/maven-central/v/io.github.mthebaud/predict4all)](http://mvnrepository.com/artifact/io.github.mthebaud/predict4all)
-[![licence](https://img.shields.io/github/license/mthebaud/predict4all)](https://github.com/mthebaud/predict4all/blob/master/LICENCE)
 [![javadoc](https://javadoc.io/badge2/io.github.mthebaud/predict4all/javadoc.svg)](https://javadoc.io/doc/io.github.mthebaud/predict4all)
+[![licence](https://img.shields.io/github/license/mthebaud/predict4all)](https://github.com/mthebaud/predict4all/blob/master/LICENCE)
+
+<p align="center">
+  <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/predict4all_demo_gif.gif">
+</p>
 
 PREDICT4ALL is an **accurate, lightweight, free and open-source next word prediction library**. It aims to be integrated in applications to display possible next words and easily current user input : virtual keyboards, aid communication software, word games...
 
@@ -73,7 +80,7 @@ try (StaticNGramTrieDictionary ngramDictionary = StaticNGramTrieDictionary.open(
 
 You can find complete working code for these examples and more complex ones in [predict4all-example](https://github.com/mthebaud/predict4all/blob/master/predict4all-example/src/main/java/org/predict4all/example/)
 
-Please read the [Javadoc](https://javadoc.io/doc/io.github.mthebaud/predict4all) ! (public classes are well documented)
+Please read the [Javadoc](https://javadoc.io/doc/io.github.mthebaud/predict4all) (public classes are well documented)
 
 ### Predict next words
 
@@ -145,7 +152,7 @@ WordPredictionResult predictionResult = wordPredictor.predict("je vais à la ");
 for (WordPrediction prediction : predictionResult.getPredictions()) {
     System.out.println(prediction);
 }
-wordPredictor.trainDynamicModel("je vais à la gare", false);
+wordPredictor.trainDynamicModel("je vais à la gare");
 predictionResult = wordPredictor.predict("je vais à la ");
 for (WordPrediction prediction : predictionResult.getPredictions()) {
     System.out.println(prediction);
@@ -229,12 +236,12 @@ To train your own language model, you will first need to prepare :
 
 - The runtime environment for Predict4All (JRE 1.8+) with enough RAM (the more you get, the more you will be able to create big models)
 - The training data : a directory containing .txt files encoded in UTF-8 (to improve computing performance, it's better to have multiple txt files than a single big txt file)
-- Lexique : a base dictionary for the French Language that you should extract somewhere on your system ([can be downloaded here](http://www.lexique.org/databases/Lexique383/Lexique383.zip))
+- Lexique : a base dictionary for the French Language that you should extract somewhere on your system ([downloaded](http://www.lexique.org/databases/Lexique383/Lexique383.zip))
 - A training configuration file : you can use **res/default/fr_default_training_configuration.json** - make sure to change **PATH_TO_LEXIQUE**
 
 *A good CPU is also a key point : Predict4All strongly use multi threaded algorithms, so the more core you get, the faster the training will be*
 
-Then, you can run the executable jar ([precompiled version available here](https://drive.google.com/file/d/1SmkqSFMjt_UH4ZKKWsRnh5Xq8heb8d-6/view?usp=sharing)) with a command line :
+Then, you can run the executable jar ([precompiled version available](https://drive.google.com/file/d/1SmkqSFMjt_UH4ZKKWsRnh5Xq8heb8d-6/view?usp=sharing)) with a command line :
 
 ```
 java -Xmx16G -jar predict4all-model-trainer-cmd-1.1.0.jar -config fr_training_configuration.json -language fr -ngram-dictionary fr_ngrams.bin -word-dictionary fr_words.bin path/to/corpus
@@ -250,7 +257,9 @@ Alternatively, you can check **LanguageDataModelTrainer** in **predict4all-model
 
 This software is distributed under the **Apache License 2.0** (see file LICENCE)
 
-Please let us know if you use PREDICT4ALL ! Feel free to fill an [issue](https://github.com/mthebaud/predict4all/issues) if you need assistance.
+Please let us know if you use PREDICT4ALL ! 
+
+Feel free to fill an [issue](https://github.com/mthebaud/predict4all/issues) if you need assistance.
 
 ## References
 
