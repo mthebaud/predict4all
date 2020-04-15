@@ -5,10 +5,8 @@
   <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/partners.png">
 </p>
 
-# SIBYLLE - PREDICT4ALL
-
-lightweight and simple next word prediction library for all
-------
+ SIBYLLE - PREDICT4ALL
+======
 
 [![mvn](https://img.shields.io/maven-central/v/io.github.mthebaud/predict4all)](http://mvnrepository.com/artifact/io.github.mthebaud/predict4all)
 [![javadoc](https://javadoc.io/badge2/io.github.mthebaud/predict4all/javadoc.svg)](https://javadoc.io/doc/io.github.mthebaud/predict4all)
@@ -29,9 +27,9 @@ Currently, Predict4All supports french language (provided rules and pre-trained 
 
 ## Project
 
-This library was developed in the collaborative project PREDICT4ALL involving [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr), [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/) and [BdTln Team, LIFAT, Université de Tours](https://lifat.univ-tours.fr/teams/bdtin/)
+**PREDICT4ALL is an open-source adapted word prediction for AAC systems, with a strong correction engine enabling user with special needs to enter texts faster with fewer mistakes.**
 
-> **PREDICT4ALL is an open-source adapted word prediction for AAC systems, with a strong correction engine enabling user with special needs to enter texts faster with fewer mistakes.**  
+This library was developed in the collaborative project PREDICT4ALL involving [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr), [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/) and [BdTln Team, LIFAT, Université de Tours](https://lifat.univ-tours.fr/teams/bdtin/)
 
 PREDICT4ALL is supported by [Fondation Paul Bennetot](https://www.fondationpaulbennetot.org/), Fondation du Groupe Matmut under Fondation de l'Avenir, Paris, France (*project AP-FPB 16-001*)
 
