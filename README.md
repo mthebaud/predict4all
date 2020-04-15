@@ -16,7 +16,7 @@
   <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/predict4all_demo_gif.gif">
 </p>
 
-PREDICT4ALL is an **accurate, lightweight, free and open-source next word prediction library**. It aims to be integrated in applications to display possible next words and easily current user input : virtual keyboards, aid communication software, word games...
+Predict4All is an **accurate, lightweight, free and open-source next word prediction library**. It aims to be integrated in applications to display possible next words and easily current user input : virtual keyboards, aid communication software, word games...
 
 It's a simple, low dependency library, with a low memory foot print. Its goal is to provide a memory efficient local word prediction that rely on fast read from the disk and fast CPU.
 
@@ -27,11 +27,11 @@ Currently, Predict4All supports french language (provided rules and pre-trained 
 
 ## Project
 
-**PREDICT4ALL is an open-source adapted word prediction for AAC systems, with a strong correction engine enabling user with special needs to enter texts faster with fewer mistakes.**
+**Sibylle-Predict4All is an open-source adapted word prediction for AAC systems, with a strong correction engine enabling user with special needs to enter texts faster with fewer mistakes.**
 
-This library was developed in the collaborative project PREDICT4ALL involving [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr), [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/) and [BdTln Team, LIFAT, Université de Tours](https://lifat.univ-tours.fr/teams/bdtin/)
+This library was developed in the collaborative project Predict4All involving [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr), [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/) and [BdTln Team, LIFAT, Université de Tours](https://lifat.univ-tours.fr/teams/bdtin/)
 
-PREDICT4ALL is supported by [Fondation Paul Bennetot](https://www.fondationpaulbennetot.org/), Fondation du Groupe Matmut under Fondation de l'Avenir, Paris, France (*project AP-FPB 16-001*)
+Predict4All is supported by [Fondation Paul Bennetot](https://www.fondationpaulbennetot.org/), Fondation du Groupe Matmut under Fondation de l'Avenir, Paris, France (*project AP-FPB 16-001*)
 
 This project has been integrated in the following AAC software : LifeCompanion, Sibylle, CiviKey
 
@@ -257,7 +257,7 @@ Alternatively, you can check **LanguageDataModelTrainer** in **predict4all-model
 
 This software is distributed under the **Apache License 2.0** (see file LICENCE)
 
-Please let us know if you use PREDICT4ALL ! 
+Please let us know if you use Predict4All ! 
 
 Feel free to fill an [issue](https://github.com/mthebaud/predict4all/issues) if you need assistance.
 
