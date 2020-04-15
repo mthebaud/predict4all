@@ -1,0 +1,5 @@
+Bonjour, ceci est un essai de prédiction.
+Le but est de tester la prédiction de mots, ainsi que de vérifier que tout fonctionne correctement.
+Mais la prédiction de choses est plus variée que ce que l'on pense.
+En revanche, la prédiction de mots est plus régulière.
+J'ai bien aimé !

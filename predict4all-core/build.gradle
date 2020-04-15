@@ -1,0 +1,109 @@
+plugins {
+    id 'maven-publish'
+}
+
+apply plugin: 'signing'
+
+group = 'io.github.mthebaud'
+
+dependencies {
+    // Primitive collections
+    implementation 'net.sf.trove4j:trove4j:3.0.3'
+    // PatriciaTrie (WordDictionanry)
+    implementation 'org.apache.commons:commons-collections4:4.3'
+    // IO
+    implementation 'com.google.code.gson:gson:2.8.5'
+
+    // Tests
+    testRuntime 'ch.qos.logback:logback-classic:1.1.3'
+    testImplementation 'org.mockito:mockito-core:2.27.0'
+    testImplementation 'junit:junit:4.12'
+}
+
+processResources {
+    outputs.upToDateWhen { false }
+
+    filesMatching('**predict4all.properties') {
+        expand(
+                'version': project.version,
+                'buildDate': new Date().getTime()
+        )
+    }
+}
+
+javadoc {
+    options.links += [
+            'https://docs.oracle.com/javase/8/docs/api/',
+            'https://javadoc.io/doc/net.sf.trove4j/trove4j/3.0.3'
+    ]
+    if (JavaVersion.current() >= JavaVersion.VERSION_1_9) {
+        options.addStringOption("-release", "8");
+    }
+    options.encoding = 'UTF-8'
+}
+
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+    dependsOn 'javadoc'
+    archiveClassifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+jar {
+    manifest {
+        attributes 'Automatic-Module-Name': 'org.predict4all'
+    }
+}
+
+publishing {
+    publications {
+        mavenCentral(MavenPublication) {
+            from components.java
+            artifact sourcesJar
+            artifact javadocJar
+            artifactId = 'predict4all'
+            pom {
+                name = "Predict4All"
+                description = "Predict4All : accurate, lightweight, free and open-source next word prediction library"
+                url = "https://github.com/mthebaud/predict4all"
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "mthebaud"
+                        name = "Mathieu THEBAUD"
+                        email = "math.thebaud@gmail.com"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/mthebaud/predict4all.git"
+                    developerConnection = "scm:git:ssh://github.com:mthebaud/predict4all.git"
+                    url = "http://github.com/mthebaud/predict4all/tree/master"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            def releasesRepoUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2"
+            def snapshotsRepoUrl = "https://oss.sonatype.org/content/repositories/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            credentials {
+                username ossrhUsername
+                password ossrhPassword
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenCentral
+}

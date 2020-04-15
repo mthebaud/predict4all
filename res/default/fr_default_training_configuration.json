@@ -1,0 +1,25 @@
+{
+  "ngramOrder": 4,
+  "upperCaseReplacementThreshold": 0.35,
+  "convertCaseFromDictionaryModelThreshold": 1.0E-8,
+  "unknownWordCountThreshold": 0,
+  "directlyValidWordCountThreshold": 20,
+  "pruningMethod": "ORDER_COUNT",
+  "ngramPruningWeightedDifferenceThreshold": 1.0E-4,
+  "ngramPruningCountThreshold": 2,
+  "ngramPruningOrderCountThresholds": [
+    -1,
+    2,
+    3,
+    4
+  ],
+  "smoothingDiscountValue": -1.0,
+  "smoothingDiscountValueLowerBound": 0.1,
+  "smoothingDiscountValueUpperBound": 1.0,
+  "lsaWindowSize": 100,
+  "lsaFrequentWordSize": 5000,
+  "lsaVocabularySize": 80000,
+  "lsaTargetSvdSize": 200,
+  "lsaDensitySize": 100,
+  "baseWordDictionaryPath": "PATH_TO_LEXIQUE\\Lexique383.tsv"
+}

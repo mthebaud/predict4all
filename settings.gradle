@@ -1,0 +1,5 @@
+rootProject.name = 'predict4all'
+
+include 'predict4all-core'
+include 'predict4all-model-trainer-cmd'
+include 'predict4all-example'
