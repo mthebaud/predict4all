@@ -35,8 +35,9 @@ It aims to be integrated in applications to display possible next words and help
 This correction model allows the correction to happen earlier in prediction compared to string distance techniques.
 This also allows the correction to be similar to existing corrector (e.g. GBoard) but to be enhanced with custom rule based on user errors (dysorthography, dyslexia, etc)
 
-**Predict4All was designed with a close relation with speech therapist and occupational therapist from [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr) and [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/)
-to ensure that it match needs and requirements for user with speech and text writing troubles**
+**Predict4All was co-designed with speech therapists and occupational therapists from [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr) and [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/)
+to ensure that it match needs and requirements for user with speech and text writing troubles.**
+A particular attention was given to determine common and particular mistakes made by people with dysorthography and dyslexia.
 
 Currently, Predict4All supports french language (provided rules and pre-trained language model).
 
