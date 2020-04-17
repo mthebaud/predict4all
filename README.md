@@ -21,7 +21,7 @@ Predict4All is an **accurate, lightweight, free and open-source next word predic
 
 It aims to be integrated in applications to display possible next words and help user input : virtual keyboards, aid communication software, word games...
 
-**Key features**
+## Key features
 
 - Next word prediction
 - Current word completion
@@ -31,9 +31,9 @@ It aims to be integrated in applications to display possible next words and help
 - Easy integration : load precomputed models and start predicting !
 - Low memory foot print : dynamically loaded language models allow memory saves 
 
-Predict4All particularity is its correction model : it works thanks to a set of correction rules (general or specific : accents, grammar, missing space, etc).
+**Predict4All originality stands in its correction model** : it works thanks to a set of correction rules (general or specific : accents, grammar, missing space, etc).
 This correction model allows the correction to happen earlier in prediction compared to string distance techniques.
-This also allows the correction to be similar to existing corrector (e.g. GBoard) but to be enhanced with custom rule based on user errors (dysorthography, dyslexia, etc) 
+This also allows the correction to be similar to existing corrector (e.g. GBoard) but to be enhanced with custom rule based on user errors (dysorthography, dyslexia, etc)
 
 Currently, Predict4All supports french language (provided rules and pre-trained language model).
 
