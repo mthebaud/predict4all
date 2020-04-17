@@ -15,11 +15,9 @@
 package org.predict4all.nlp.semantic;
 
 /**
- * See commit : a693f9a8a1675f7f7f17defe4d69fd8c1b5b7935 (in private repo)
- * to see how semantic was integrated in prediction
- *
  * @author Mathieu THEBAUD
  */
+//See commit : a693f9a8a1675f7f7f17defe4d69fd8c1b5b7935 (in private repo) to see how semantic was integrated in prediction
 public interface SemanticDictionaryConfiguration {
     double getSemanticDensityMinBound();
 

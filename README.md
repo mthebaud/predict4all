@@ -11,17 +11,29 @@
 [![mvn](https://img.shields.io/maven-central/v/io.github.mthebaud/predict4all)](http://mvnrepository.com/artifact/io.github.mthebaud/predict4all)
 [![javadoc](https://javadoc.io/badge2/io.github.mthebaud/predict4all/javadoc.svg)](https://javadoc.io/doc/io.github.mthebaud/predict4all)
 [![licence](https://img.shields.io/github/license/mthebaud/predict4all)](https://github.com/mthebaud/predict4all/blob/master/LICENCE)
+[![Build Status](https://travis-ci.com/mthebaud/predict4all.svg?branch=master)](https://travis-ci.com/mthebaud/predict4all)
 
 <p align="center">
   <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/predict4all_demo_gif.gif">
 </p>
 
-Predict4All is an **accurate, lightweight, free and open-source next word prediction library**. It aims to be integrated in applications to display possible next words and easily current user input : virtual keyboards, aid communication software, word games...
+Predict4All is an **accurate, lightweight, free and open-source next word prediction library**.
 
-It's a simple, low dependency library, with a low memory foot print. Its goal is to provide a memory efficient local word prediction that rely on fast read from the disk and fast CPU.
+It aims to be integrated in applications to display possible next words and help user input : virtual keyboards, aid communication software, word games...
 
-It aims to predict next word or current word ends from a raw user input. It can be dynamically adapted to user input : learning new words, new sentences...
-It can also try to correct user input thanks to a set of correction rules (general or specific : accents, grammar, etc). This correction model allows the correction to happen earlier in prediction compared to string distance techniques. 
+**Key features**
+
+- Next word prediction
+- Current word completion
+- Live accurate and customizable word correction while typing
+- Dynamic models : automatically learn new words and sentence to integrate user's language and style
+- Lightweight prediction and training : low dependency and fully integrated algorithms
+- Easy integration : load precomputed models and start predicting !
+- Low memory foot print : dynamically loaded language models allow memory saves 
+
+Predict4All particularity is its correction model : it works thanks to a set of correction rules (general or specific : accents, grammar, missing space, etc).
+This correction model allows the correction to happen earlier in prediction compared to string distance techniques.
+This also allows the correction to be similar to existing corrector (e.g. GBoard) but to be enhanced with custom rule based on user errors (dysorthography, dyslexia, etc) 
 
 Currently, Predict4All supports french language (provided rules and pre-trained language model).
 
@@ -118,6 +130,8 @@ retrouve = 0.07317575867400958 (insert = etrouve, remove = 0, space = true)
 rejoins = 0.06404375655722373 (insert = ejoins, remove = 0, space = true)
 ```
 
+To tune the WordPredictor, you can explore [PredictionParameter](https://javadoc.io/doc/io.github.mthebaud/predict4all/latest/org/predict4all/nlp/prediction/PredictionParameter.html) javadoc
+
 ### Using correction rules
 
 ```java
@@ -147,6 +161,7 @@ In this example, remove become positive as the first letter in the word is incor
 
 ```java
 DynamicNGramDictionary dynamicNGramDictionary = new DynamicNGramDictionary(4);
+predictionParameter.setDynamicModelEnabled(true);
 WordPredictor wordPredictor = new WordPredictor(predictionParameter, dictionary, ngramDictionary, dynamicNGramDictionary);
 WordPredictionResult predictionResult = wordPredictor.predict("je vais à la ");
 for (WordPrediction prediction : predictionResult.getPredictions()) {
@@ -222,11 +237,13 @@ dictionary.getAllWords().stream()
 
 When you modify words (original or added by users), don't forget to save the user dictionary : it will save user words but also original words modifications.
 
+You can find further information looking at [Word](https://javadoc.io/doc/io.github.mthebaud/predict4all/latest/org/predict4all/nlp/words/model/Word.html) javadoc
+
 ### Tech notes
 
 When using Predict4All, you should take note that :
 
-- The library is not designed to be Thread safe : you should synchronize your calls to **WordPredictor**
+- The library is not designed to be thread safe : you should synchronize your calls to **WordPredictor**
 - The library relies on disk reads : the ngram file is opened with a **[FileChannel](https://docs.oracle.com/javase/8/docs/api/java/nio/channels/FileChannel.html)** : this means that your ngram data file will be opened by the process as long as you're using the library
 - Dynamic model files are dependent from the original data files : if the original data changes, you may get a **WordDictionaryMatchingException** when loading your previous user files 
 
@@ -236,15 +253,15 @@ To train your own language model, you will first need to prepare :
 
 - The runtime environment for Predict4All (JRE 1.8+) with enough RAM (the more you get, the more you will be able to create big models)
 - The training data : a directory containing .txt files encoded in UTF-8 (to improve computing performance, it's better to have multiple txt files than a single big txt file)
-- Lexique : a base dictionary for the French Language that you should extract somewhere on your system ([downloaded](http://www.lexique.org/databases/Lexique383/Lexique383.zip))
+- Lexique : a base dictionary for the French Language that you should extract somewhere on your system ([download](http://www.lexique.org/databases/Lexique383/Lexique383.zip))
 - A training configuration file : you can use **res/default/fr_default_training_configuration.json** - make sure to change **PATH_TO_LEXIQUE**
 
 *A good CPU is also a key point : Predict4All strongly use multi threaded algorithms, so the more core you get, the faster the training will be*
 
-Then, you can run the executable jar ([precompiled version available](https://drive.google.com/file/d/1SmkqSFMjt_UH4ZKKWsRnh5Xq8heb8d-6/view?usp=sharing)) with a command line :
+Then, you can run the executable jar ([precompiled version available](https://drive.google.com/file/d/1wNB3eDdvkpI0386qX896IwkxPlHcza46/view?usp=sharing)) with a command line :
 
 ```
-java -Xmx16G -jar predict4all-model-trainer-cmd-1.1.0.jar -config fr_training_configuration.json -language fr -ngram-dictionary fr_ngrams.bin -word-dictionary fr_words.bin path/to/corpus
+java -Xmx16G -jar predict4all-model-trainer-cmd-1.1.0-all.jar -config fr_training_configuration.json -language fr -ngram-dictionary fr_ngrams.bin -word-dictionary fr_words.bin path/to/corpus
 ```
 
 This command will launch a training, allowing the JVM to get 16GB memory, and giving an input and output configuration.
@@ -253,13 +270,17 @@ Generated data files will be **fr_ngrams.bin** and **fr_words.bin**
 
 Alternatively, you can check **LanguageDataModelTrainer** in **predict4all-model-trainer-cmd** to launch your training programmatically.
 
+## Getting help
+
+Please let us know if you use Predict4All !
+
+Feel free to fill an [issue](https://github.com/mthebaud/predict4all/issues) if you need assistance or if you find a bug.
+
+If you want, you can tag you question with "predict4all" on [StackOverflow](https://stackoverflow.com/questions/tagged/predict4all)
+
 ## Licence
 
-This software is distributed under the **Apache License 2.0** (see file LICENCE)
-
-Please let us know if you use Predict4All ! 
-
-Feel free to fill an [issue](https://github.com/mthebaud/predict4all/issues) if you need assistance.
+This software is distributed under the **Apache License 2.0** (see file LICENCE) 
 
 ## References
 

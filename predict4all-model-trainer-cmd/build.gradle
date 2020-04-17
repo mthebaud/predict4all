@@ -1,3 +1,7 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.2.0'
+}
+
 dependencies {
     implementation project(':predict4all-core')
     implementation 'com.beust:jcommander:1.72'
@@ -8,10 +12,9 @@ jar {
     manifest {
         attributes 'Main-Class': 'org.predict4all.runtime.trainer.cmd.LanguageDataModelTrainer'
     }
-    from {
-        configurations.runtimeClasspath.collect {
-            it.isDirectory() ? it : zipTree(it)
-        }
-    }
     archivesBaseName = 'predict4all-model-trainer-cmd'
+}
+
+shadowJar {
+    minimize()
 }
