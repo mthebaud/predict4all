@@ -5,7 +5,7 @@
   <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/partners.png">
 </p>
 
- SIBYLLE - PREDICT4ALL
+ PREDICT4ALL
 ======
 
 [![mvn](https://img.shields.io/maven-central/v/io.github.mthebaud/predict4all)](http://mvnrepository.com/artifact/io.github.mthebaud/predict4all)
@@ -34,6 +34,9 @@ It aims to be integrated in applications to display possible next words and help
 **Predict4All originality stands in its correction model** : it works thanks to a set of correction rules (general or specific : accents, grammar, missing space, etc).
 This correction model allows the correction to happen earlier in prediction compared to string distance techniques.
 This also allows the correction to be similar to existing corrector (e.g. GBoard) but to be enhanced with custom rule based on user errors (dysorthography, dyslexia, etc)
+
+**Predict4All was designed with a close relation with speech therapist and occupational therapist from [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr) and [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/)
+to ensure that it match needs and requirements for user with speech and text writing troubles**
 
 Currently, Predict4All supports french language (provided rules and pre-trained language model).
 
