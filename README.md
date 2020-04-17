@@ -43,7 +43,7 @@ Currently, Predict4All supports french language (provided rules and pre-trained 
 
 ## Project
 
-**Sibylle-Predict4All is an open-source adapted word prediction for AAC systems, with a strong correction engine enabling user with special needs to enter texts faster with fewer mistakes.**
+**Predict4All is an open-source adapted word prediction for AAC systems, with a strong correction engine enabling user with special needs to enter texts faster with fewer mistakes.**
 
 This library was developed in the collaborative project Predict4All involving [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr), [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/) and [BdTln Team, LIFAT, Université de Tours](https://lifat.univ-tours.fr/teams/bdtin/)
 
