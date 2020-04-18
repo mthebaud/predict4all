@@ -68,7 +68,7 @@ publishing {
             artifactId = 'predict4all'
             pom {
                 name = "Predict4All"
-                description = "Predict4All : accurate, lightweight, multilingual, free and open-source next word prediction library"
+                description = "Predict4All : accurate, fast, lightweight, multilingual, free and open-source next word prediction library"
                 url = "https://github.com/mthebaud/predict4all"
                 licenses {
                     license {

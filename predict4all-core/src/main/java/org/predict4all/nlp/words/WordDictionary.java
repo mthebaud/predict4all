@@ -170,8 +170,6 @@ public class WordDictionary {
      * @return the list of all word starting with the given prefix
      */
     public Map<BiIntegerKey, NextWord> getValidWordForPredictionByPrefix(String wordPrefix, PredictionParameter predictionParameter, int wantedWordCount, Set<Integer> wordIdsToExclude) {
-        LOGGER.info("Request for \"{}\"", wordPrefix);
-
         Map<BiIntegerKey, NextWord> words = new HashMap<>(wantedWordCount);
 
         // Get base from prefix map : factor = 1.0 because it's exact prefix matching

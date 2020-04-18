@@ -83,18 +83,23 @@ public class ConsoleWordPredictor {
             // Start taking input word input to test
             try (Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8.name())) {
                 while (true) {
-                    int answer = getAnswer(scanner);
-                    switch (answer) {
+                    int lastAnswer = getAnswer(scanner);
+                    switch (lastAnswer) {
                         case 1:
-                            LOGGER.info("Enter the test input :");
-                            String textBeforeCaret = scanner.nextLine();
-                            LOGGER.info("Text before caret {}", textBeforeCaret);
-                            wordPredictor.predict(textBeforeCaret).getPredictions().forEach(p -> LOGGER.info("{}", p));
+                            LOGGER.info("Enter the test input (type \"/menu\" to come back to choices):");
+                            String textBeforeCaret;
+                            while (!"/menu".equals(textBeforeCaret = scanner.nextLine())) {
+                                LOGGER.info("Text before caret {}", textBeforeCaret);
+                                wordPredictor.predict(textBeforeCaret).getPredictions().forEach(p -> LOGGER.info("{}", p));
+                            }
                             break;
                         case 2:
-                            LOGGER.info("Enter the text to train the dynamic model :");
-                            wordPredictor.trainDynamicModel(scanner.nextLine());
-                            LOGGER.info("Model trained");
+                            LOGGER.info("Enter the text to train the dynamic model (type \"/menu\" to come back to choices):");
+                            String textToTrainDynamicModel;
+                            while (!"/menu".equals(textToTrainDynamicModel = scanner.nextLine())) {
+                                wordPredictor.trainDynamicModel(textToTrainDynamicModel);
+                                LOGGER.info("Model trained");
+                            }
                             break;
                         case 3:
                             wordDictionary.saveUserDictionary(USER_FILE_WORDS);
@@ -138,7 +143,7 @@ public class ConsoleWordPredictor {
     }
 
     private static int getAnswer(Scanner scanner) {
-        LOGGER.info("What do you want to test ?\n\t1 - Test prediction/completion\n\t2 - Train the dynamic model\n\t3 - Save and exit\n\t4 - Exit (without saving)");
+        LOGGER.info("What do you want to test ?\n\t1 - Test prediction/completion\n\t2 - Train the dynamic model\n\t3 - Save and exit\n\t4 - Exit (without saving)\nType \"/menu\" to come back to choices.");
         do {
             String input = null;
             try {

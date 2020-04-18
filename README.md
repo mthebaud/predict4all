@@ -17,7 +17,7 @@
   <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/predict4all_demo_gif.gif">
 </p>
 
-Predict4All is an **accurate, lightweight, multilingual, free and open-source next word prediction library**.
+Predict4All is an **accurate, fast, lightweight, multilingual, free and open-source next word prediction library**.
 
 It aims to be integrated in applications to display possible next words and help user input : virtual keyboards, text editors, AAC systems...
 
@@ -29,7 +29,7 @@ It aims to be integrated in applications to display possible next words and help
 - Dynamic models : automatically learn new words and sentence to integrate user's language and style
 - Lightweight prediction and training : low dependency and fully integrated algorithms
 - Easy integration : load precomputed models and start predicting !
-- Low memory foot print : dynamically loaded language models allow memory saves 
+- Low memory foot print : dynamically loaded language models allow memory saves - it only uses 25 MB of heap space ! 
 
 **Predict4All originality stands in its correction model** : it works thanks to a set of correction rules (general or specific : accents, grammar, missing space, etc).
 This correction model allows the correction to happen earlier in prediction compared to string distance techniques.
