@@ -13,10 +13,11 @@
  */
 
 /**
- * Contains classes related to {@link org.predict4all.nlp.words.model.Word} and {@link org.predict4all.nlp.words.WordDictionary}<br>
- * Mainly used to identify {@link org.predict4all.nlp.words.model.Word} as unique instance identified with int ID.<br>
- * This package mainly focus on managing vocabulary.
+ * Package containing everything about the NGram model used in Predict4All.<br>
+ * Contains the ngram training algorithm in {@link org.predict4all.nlp.ngram.NGramDictionaryGenerator}<br>
+ * Also contains {@link org.predict4all.nlp.ngram.trie.AbstractNGramTrieNode} : a trie structure that can be implemented in both ways : dynamic or static.<br>
+ * This trie structure allow having a huge number of ngram available for probability computation without loading them into memory.
  *
  * @author Mathieu THEBAUD
  */
-package org.predict4all.nlp.words;
+package org.predict4all.nlp.ngram;

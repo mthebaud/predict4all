@@ -17,9 +17,9 @@
   <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/predict4all_demo_gif.gif">
 </p>
 
-Predict4All is an **accurate, lightweight, free and open-source next word prediction library**.
+Predict4All is an **accurate, lightweight, multilingual, free and open-source next word prediction library**.
 
-It aims to be integrated in applications to display possible next words and help user input : virtual keyboards, aid communication software, word games...
+It aims to be integrated in applications to display possible next words and help user input : virtual keyboards, text editors, AAC systems...
 
 ## Key features
 
@@ -42,8 +42,6 @@ A particular attention was given to determine common and particular mistakes mad
 Currently, Predict4All supports french language (provided rules and pre-trained language model).
 
 ## Project
-
-**Predict4All is an open-source adapted word prediction for AAC systems, with a strong correction engine enabling user with special needs to enter texts faster with fewer mistakes.**
 
 This library was developed in the collaborative project Predict4All involving [CMRRF Kerpape](http://www.kerpape.mutualite56.fr/fr), [Hopital Raymond Poincaré](http://raymondpoincare.aphp.fr/) and [BdTln Team, LIFAT, Université de Tours](https://lifat.univ-tours.fr/teams/bdtin/)
 

@@ -13,10 +13,10 @@
  */
 
 /**
- * Contains classes related to {@link org.predict4all.nlp.words.model.Word} and {@link org.predict4all.nlp.words.WordDictionary}<br>
- * Mainly used to identify {@link org.predict4all.nlp.words.model.Word} as unique instance identified with int ID.<br>
- * This package mainly focus on managing vocabulary.
+ * Contains custom {@link java.io.InputStream} and {@link java.io.OutputStream} to save/load Predict4All specific items ({@link org.predict4all.nlp.parser.token.Token} and {@link org.predict4all.nlp.words.model.Word}).<br>
+ * Note that NGram are saved without these stream as they are designed to be loaded on demand with a {@link java.nio.channels.FileChannel}.<br>
+ * Both token and word streams extends {@link java.io.DataOutputStream} or {@link java.io.DataInputStream} : this was done for optimization, this method is much more optimized that using any other serialization methods.
  *
  * @author Mathieu THEBAUD
  */
-package org.predict4all.nlp.words;
+package org.predict4all.nlp.io;

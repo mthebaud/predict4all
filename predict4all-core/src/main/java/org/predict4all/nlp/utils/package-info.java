@@ -13,10 +13,8 @@
  */
 
 /**
- * Contains classes related to {@link org.predict4all.nlp.words.model.Word} and {@link org.predict4all.nlp.words.WordDictionary}<br>
- * Mainly used to identify {@link org.predict4all.nlp.words.model.Word} as unique instance identified with int ID.<br>
- * This package mainly focus on managing vocabulary.
+ * Contains some simple data structure and lambda interfaces and classic "utils" static classes.
  *
  * @author Mathieu THEBAUD
  */
-package org.predict4all.nlp.words;
+package org.predict4all.nlp.utils;

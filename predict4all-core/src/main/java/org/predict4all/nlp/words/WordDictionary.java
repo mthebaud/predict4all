@@ -40,7 +40,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Represent a word dictionary.<br>
  * This dictionary identify each sequence of chars as an unique "word" and keep information for this word.<br>
  * Each word are identified by a single int ID to save memory and space.<br>
- * The dictionary itself is identified with an UUID to verify consistency when using user dictionary.
+ * The dictionary itself is identified with an UUID to verify consistency when using user dictionary.<br>
+ * Note that {@link Word} added to {@link WordDictionary} cannot be removed : their ID should be consistent and they could have been used in a {@link org.predict4all.nlp.ngram.dictionary.AbstractNGramDictionary} :
+ * however, you can disable a word with {@link Word#setForceInvalid(boolean, boolean)}
  *
  * @author Mathieu THEBAUD
  */
@@ -80,23 +82,81 @@ public class WordDictionary {
         }
     }
 
-    // SIMPLE API
+    // SIMPLE PUBLIC API
     // ========================================================================
-    public int getWordId(String text) {
-        return getWord(text).getID();
+
+    /**
+     * To get a word ID.<br>
+     * Note that this method will never return null : it can however return {@link Tag#UNKNOWN} id if there is no word in the dictionary for the given text.
+     *
+     * @param wordStr the word content
+     * @return word ID if found in the dictionary or {@link Tag#UNKNOWN} id
+     */
+    public int getWordId(String wordStr) {
+        return getWord(wordStr).getID();
     }
 
-    public Word getWord(String text) {
-        Word word = this.wordTrie.get(text);
+    /**
+     * To get the word entity from text.<br>
+     * Note that this method will never return null : it can however return {@link Tag#UNKNOWN} id if there is no word in the dictionary for the given text.
+     *
+     * @param wordStr the word content
+     * @return word if found in the dictionary or {@link TagWord} with {@link Tag#UNKNOWN}
+     */
+    public Word getWord(String wordStr) {
+        Word word = this.wordTrie.get(wordStr);
         return word != null ? word : this.wordsById.get(Tag.UNKNOWN.getId());
     }
 
+    /**
+     * To get a word entity from id.<br>
+     * Contrary to other {@link #getWord(String)} method, this return null if there is no word for the given ID
+     *
+     * @param wordId the word ID
+     * @return the word associated with the given ID
+     */
     public Word getWord(int wordId) {
         return this.wordsById.get(wordId);
     }
+
+    /**
+     * All the existing words in this dictionary.<br>
+     * Words can be special words as {@link TagWord}, {@link EquivalenceClassWord}, etc.<br>
+     * They can also be {@link SimpleWord} from a trained model, and {@link UserWord} if they are word "learned" when using the predictor.<br>
+     * Note that if you ony want the possible words for final user, you should use {@link Word#isValidToBePredicted(PredictionParameter)} to filter out invalid words.<br>
+     *
+     * @return all possible words collection.<br>
+     * The returned Collection is <strong>ready-only</strong>
+     */
+    public Collection<Word> getAllWords() {
+        return Collections.unmodifiableCollection(wordsById.valueCollection());
+    }
+
+    /**
+     * The word count stored in this dictionary.
+     *
+     * @return the stored word count
+     */
+    public int size() {
+        return this.wordsById.size();
+    }
+
+    /**
+     * To manually add an user word to this dictionary.<br>
+     * This will create the associated word entity.<br>
+     * <strong>This doesn't check that a previous word was in the dictionary with the same word : you should check it before calling this method (use {@link #getWord(String)})</strong>
+     *
+     * @param wordStr the word to add
+     * @return the created user word
+     */
+    public Word putUserWord(String wordStr) {
+        UserWord cWord = new UserWord(this.generateWordID(), wordStr);
+        this.putNewWordToDictionary(cWord);
+        return cWord;
+    }
     // ========================================================================
 
-    // QUERY API
+    // PREFIX API
     // ========================================================================
 
     /**
@@ -115,21 +175,18 @@ public class WordDictionary {
         Map<BiIntegerKey, NextWord> words = new HashMap<>(wantedWordCount);
 
         // Get base from prefix map : factor = 1.0 because it's exact prefix matching
-        searchAndAdd(wordPrefix, predictionParameter, wordIdsToExclude, words, "Du dictionnaire par le début de mot");
+        searchAndAdd(wordPrefix, predictionParameter, wordIdsToExclude, words, "From WordDictionary (exact word start)");
 
         // Try to find a capitalized version (if needed)
-        // TODO : prediction configuration
         if (words.size() < wantedWordCount && !Predict4AllUtils.isCapitalized(wordPrefix)) {
             searchAndAdd(Predict4AllUtils.capitalize(wordPrefix), predictionParameter, wordIdsToExclude, words,
-                    "Du dictionnaire (version capitalisée)");
+                    "From WordDictionary (capitalized version of prefix)");
         }
 
         // Try to find a lower case version (if needed)
-        // TODO : prediction configuration
         if (words.size() < wantedWordCount && Predict4AllUtils.containsUpperCase(wordPrefix)) {
-            searchAndAdd(Predict4AllUtils.lowerCase(wordPrefix), predictionParameter, wordIdsToExclude, words, "Du dictionnaire (version lowercase)");
+            searchAndAdd(Predict4AllUtils.lowerCase(wordPrefix), predictionParameter, wordIdsToExclude, words, "From WordDictionary (lowercase version of prefix)");
         }
-
         return words;
     }
 
@@ -145,38 +202,20 @@ public class WordDictionary {
                 );
     }
 
-    public Collection<Word> getAllWords() {
-        return wordsById.valueCollection();
-    }
-
-    public int size() {
-        return this.wordsById.size();
-    }
-
-    public boolean isExactWordWithPrefixExist(String prefix) {
-        SortedMap<String, Word> prefixMap = wordTrie.prefixMap(prefix);
-        return prefixMap != null && !prefixMap.isEmpty();
-    }
 
     public SortedMap<String, Word> getExactWordsWithPrefixExist(String prefix) {
-        return wordTrie.prefixMap(prefix);
+        return Collections.unmodifiableSortedMap(wordTrie.prefixMap(prefix));
     }
 
-    public int getIDGeneratorState() {
+    int getIDGeneratorState() {
         return this.idGenerator.get();
     }
     // ========================================================================
 
-    // INSERT API
+    // INSERT WORD API
     // ========================================================================
     public int putUserWord(Token token) {
         return this.putNewWordToDictionary(new UserWord(this.generateWordID(), token.getText()));
-    }
-
-    public Word putUserWord(String word) {
-        UserWord cWord = new UserWord(this.generateWordID(), word);
-        this.putNewWordToDictionary(cWord);
-        return cWord;
     }
 
     public void incrementUserWord(int wordId) {
@@ -187,11 +226,10 @@ public class WordDictionary {
         }
     }
 
-    public boolean isWordExists(String text) {
-        return this.wordTrie.get(text) != null;
+    void compact() {
+        wordsById.compact();
     }
 
-    // TODO : method to "pseudo validate" new words (length, special char, etc...)
     public boolean isTokenValidToCreateUserWord(Token token) {
         String txt = token.getText();
         if (Predict4AllUtils.length(txt) > 2) {
@@ -210,20 +248,22 @@ public class WordDictionary {
             this.wordTrie.put(word.getWord(), word);
         return word.getID();
     }
-
-    private int generateWordID() {
-        return this.idGenerator.incrementAndGet();
-    }
-
-    public void compact() {
-        wordsById.compact();
-    }
     // ========================================================================
 
     // IO
     // ========================================================================
+
+    /**
+     * Create a word dictionary from a word dictionary data file previously created with the training algorithm.<br>
+     * This method should not be called on user dictionary file, use {@link #loadUserDictionary(File)} instead.
+     *
+     * @param languageModel  the language model contained in this dictionary
+     * @param dictionaryFile the dictionary data file
+     * @return the loaded dictionary
+     * @throws IOException if the data file doesn't exist or if IO problem happens
+     */
     public static WordDictionary loadDictionary(LanguageModel languageModel, File dictionaryFile)
-            throws IOException, WordDictionaryMatchingException {
+            throws IOException {
         long start = System.currentTimeMillis();
         String dicId = null;
         try (WordFileInputStream wfs = new WordFileInputStream(dictionaryFile)) {
@@ -236,6 +276,15 @@ public class WordDictionary {
         return loadedDictionary;
     }
 
+    /**
+     * To load user dictionary on an existing trained dictionary.<br>
+     * This will supplement this dictionary with custom word from user, or existing word with modified parameters.<br>
+     * This should be called on dictionary previously saved with {@link #saveUserDictionary(File)}
+     *
+     * @param userDictionaryFile the user dictionary data file
+     * @throws IOException                     if the data file doesn't exist or if IO problem happens
+     * @throws WordDictionaryMatchingException if the loaded word dictionary doesn't match this dictionary : the user dictionary should always be loaded on the same trained dictionary used to save it
+     */
     public void loadUserDictionary(File userDictionaryFile) throws IOException, WordDictionaryMatchingException {
         long start = System.currentTimeMillis();
         int wCount = loadWordsFromFile(userDictionaryFile, this);
@@ -265,6 +314,16 @@ public class WordDictionary {
         return wCount;
     }
 
+    /**
+     * To save this dictionary modified words.<br>
+     * This will saved into the given file : the {@link UserWord} added to the dictionary,
+     * but also every {@link Word} that was modified (e.g. if {@link Word#setProbFactor(double, boolean)}, {@link Word#setForceInvalid(boolean, boolean)} etc... was called).<br>
+     * This file can later be loaded with {@link #loadUserDictionary(File)}
+     *
+     * @param userDictionaryFile the user dictionary data file
+     * @throws IOException if saving failed
+     * @see Word to see exactly how {@link Word#isModifiedByUserOrSystem()} works
+     */
     public void saveUserDictionary(File userDictionaryFile) throws IOException {
         long start = System.currentTimeMillis();
         int wCount = 0;
@@ -292,6 +351,10 @@ public class WordDictionary {
             this.wordTrie.put(word.getWord(), word);
         }
         updateIDGenerator(word.getID());
+    }
+
+    private int generateWordID() {
+        return this.idGenerator.incrementAndGet();
     }
 
     private void updateIDGenerator(int id) {

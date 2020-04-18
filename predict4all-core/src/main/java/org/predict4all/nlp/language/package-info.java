@@ -13,10 +13,9 @@
  */
 
 /**
- * Contains classes related to {@link org.predict4all.nlp.words.model.Word} and {@link org.predict4all.nlp.words.WordDictionary}<br>
- * Mainly used to identify {@link org.predict4all.nlp.words.model.Word} as unique instance identified with int ID.<br>
- * This package mainly focus on managing vocabulary.
- *
+ * Represent every language specific items.<br>
+ * A base {@link org.predict4all.nlp.language.AbstractLanguageModel} allow simpler {@link org.predict4all.nlp.language.LanguageModel} implementations.<br>
+ * Sub-packages as "french" may contains language specific code.
  * @author Mathieu THEBAUD
  */
-package org.predict4all.nlp.words;
+package org.predict4all.nlp.language;

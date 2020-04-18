@@ -363,7 +363,7 @@ public class WordPredictor {
 
             // First generate prediction for
             long time = System.currentTimeMillis() - startTotal;
-            LOGGER.info("Prediction took {} ms ({} results)", time, predictions.size());
+            LOGGER.debug("Prediction took {} ms ({} results)", time, predictions.size());
 
             return new WordPredictionResult(null, Predict4AllUtils.countEndUntilNextSeparator(textAfterCaret), wordPredictions);
         } else {

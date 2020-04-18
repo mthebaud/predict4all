@@ -33,11 +33,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Working example for <a href="https://github.com/mthebaud/predict4all">PREDICT4ALL</a>
+ * Working example for <a href="https://github.com/mthebaud/predict4all">PREDICT4ALL</a>.
+ * Mainly working quick examples.<br>
+ * See {@link ConsoleWordPredictor} for more detailed example.
  *
  * @author Mathieu THEBAUD
  */
-public class Predict4AllExample {
+public class QuickExample {
     private static final File FILE_NGRAMS = new File("fr_ngrams.bin");
     private static final File FILE_WORDS = new File("fr_words.bin");
 

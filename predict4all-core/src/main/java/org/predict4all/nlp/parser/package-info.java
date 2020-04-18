@@ -13,10 +13,10 @@
  */
 
 /**
- * Contains classes related to {@link org.predict4all.nlp.words.model.Word} and {@link org.predict4all.nlp.words.WordDictionary}<br>
- * Mainly used to identify {@link org.predict4all.nlp.words.model.Word} as unique instance identified with int ID.<br>
- * This package mainly focus on managing vocabulary.
+ * Package mainly focus on classes to convert a raw input text (as {@link java.lang.String}) to {@link org.predict4all.nlp.parser.token.Token} that can be used by Predict4All.<br>
+ * This package is used by both training algorithms and predictor : this allow consistency among parsing and using user input.<br>
+ *     Both word and token stream
  *
  * @author Mathieu THEBAUD
  */
-package org.predict4all.nlp.words;
+package org.predict4all.nlp.parser;
