@@ -288,6 +288,13 @@ This software is distributed under the **Apache License 2.0** (see file LICENCE)
 
 This project was developed various NLP techniques (mainly ngram based)
 
-Antoine J.Y., Crochetet M., Arbizu C., Lopez E., Pouplin S., Besnier A., Thebaud M. (2019) Ma copie adore le vélo: analyse des besoins réels en correction orthographique sur un corpus de dictées d’enfants. *TALN’2019*. [hal-02375246v1](https://hal.archives-ouvertes.fr/hal-02375246v1)
+### Directly related articles
 
-Tonio Wandmacher, Zaara Barhoumi, Nicolas Béchet, Franck Poirier, Jean-Yves Antoine. Système Sibylle d'aide à la communication pour personnes handicapées : modèle linguistique et interface utilisateur. *Traitement Automatique des Langues Naturelles - TALN 2007*. [hal-00192919](https://hal.archives-ouvertes.fr/hal-00192919)
+- **Sibylle AAC system** : Tonio Wandmacher, Jean-Yves Antoine, Jean-Paul Departe, Franck Poirier. SIBYLLE, an assistive communication system adapting to the context and its user. *ACM Transactions on Accessible Computing* , ACM New York, NY, USA 2008, 1 (1), pp.1-30. [hal-01021174](https://hal.archives-ouvertes.fr/hal-01021174)
+- **Correction needs (Dysorthography/Dyslexia users)** : Antoine J.Y., Crochetet M., Arbizu C., Lopez E., Pouplin S., Besnier A., Thebaud M. (2019) Ma copie adore le vélo: analyse des besoins réels en correction orthographique sur un corpus de dictées d’enfants. *TALN’2019*. [hal-02375246v1](https://hal.archives-ouvertes.fr/hal-02375246v1)
+
+### Inspiring papers
+
+- Techniques for automatically correcting words in text, Karen Kukich, *ACM Computing Surveys*, December 1992 [https://doi.org/10.1145/146370.146380](https://doi.org/10.1145/146370.146380)
+- On structuring probabilistic dependences in stochastic language modelling, Hermann Ney, Ute Essen, Reinhard Kneser, *Computer Speech & Language*, Volume 8, Issue 1, 1994, Pages 1-38, ISSN 0885-2308, [https://doi.org/10.1006/csla.1994.1001](https://doi.org/10.1006/csla.1994.1001)
+- *More to come...*
