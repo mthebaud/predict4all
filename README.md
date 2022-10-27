@@ -67,13 +67,13 @@ Get the library through your favorite dependency manager :
 <dependency>
     <groupId>io.github.mthebaud</groupId>
     <artifactId>predict4all</artifactId>
-    <version>1.1.0</version>
+    <version>1.2.0</version>
 </dependency>
 ```
 
 **Gradle**
 ```
-implementation 'io.github.mthebaud:predict4all:1.1.0'
+implementation 'io.github.mthebaud:predict4all:1.2.0'
 ```
 
 **In the following examples, we assume that you initialized language model, predictor, etc.**
