@@ -11,7 +11,7 @@
 [![mvn](https://img.shields.io/maven-central/v/io.github.mthebaud/predict4all)](http://mvnrepository.com/artifact/io.github.mthebaud/predict4all)
 [![javadoc](https://javadoc.io/badge2/io.github.mthebaud/predict4all/javadoc.svg)](https://javadoc.io/doc/io.github.mthebaud/predict4all)
 [![licence](https://img.shields.io/github/license/mthebaud/predict4all)](https://github.com/mthebaud/predict4all/blob/master/LICENCE)
-[![Build Status](https://travis-ci.com/mthebaud/predict4all.svg?branch=master)](https://travis-ci.com/mthebaud/predict4all)
+[![ci-predict4all-publish](https://github.com/mthebaud/predict4all/actions/workflows/ci-predict4all-publish.yml/badge.svg)](https://github.com/mthebaud/predict4all/actions/workflows/ci-predict4all-publish.yml)
 
 <p align="center">
   <img src="https://github.com/mthebaud/predict4all/raw/master/res/logos/predict4all_demo_gif.gif">
@@ -47,7 +47,7 @@ This library was developed in the collaborative project Predict4All involving [C
 
 Predict4All is supported by [Fondation Paul Bennetot](https://www.fondationpaulbennetot.org/), Fondation du Groupe Matmut under Fondation de l'Avenir, Paris, France (*project AP-FPB 16-001*)
 
-This project has been integrated in the following AAC software : LifeCompanion, Sibylle, CiviKey
+This project has been integrated in the following AAC software : [LifeCompanion](http://lifecompanionaac.org/), Sibylle, CiviKey
 
 ## Usage
 
@@ -298,3 +298,10 @@ This project was developed various NLP techniques (mainly ngram based)
 - Techniques for automatically correcting words in text, Karen Kukich, *ACM Computing Surveys*, December 1992 [https://doi.org/10.1145/146370.146380](https://doi.org/10.1145/146370.146380)
 - On structuring probabilistic dependences in stochastic language modelling, Hermann Ney, Ute Essen, Reinhard Kneser, *Computer Speech & Language*, Volume 8, Issue 1, 1994, Pages 1-38, ISSN 0885-2308, [https://doi.org/10.1006/csla.1994.1001](https://doi.org/10.1006/csla.1994.1001)
 - *More to come...*
+
+## Note for dev.
+
+Predict4All is built using Github actions fired with a git tag for its current version.
+It uses the [legacy Sonatype website](https://oss.sonatype.org/#nexus-search;quick~predict4all).
+
+To create and publish a release, tag the repository with a new version (tag should be the version number) and manually trigger the **ci-predict4all-publish** workflow.

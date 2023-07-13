@@ -18,7 +18,7 @@ jobs:
       - name: Call update build and publish command
         uses: gradle/gradle-build-action@v2.6.0
         with:
-          arguments: clean build publish --stacktrace
+          arguments: clean build check publish --stacktrace
         env:
           OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
