@@ -14,7 +14,7 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      
+
       - name : Add +X on Gradle scripts
         run: chmod +x lifecompanion-framework/gradlew & chmod +x lifecompanion/gradlew
                             
@@ -22,12 +22,10 @@ jobs:
         uses: gradle/gradle-build-action@v2
         with:
           build-root-directory: predict4all-core
-          arguments: |
-            clean build publish
-            --stacktrace
-          env:
-            OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
-            OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
-            SIGN_KEY: ${{ secrets.SIGN_KEY }}
-            SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
-            SIGN_PASSWORD: ${{ secrets.SIGN_PASSWORD }}
+          arguments: clean build publish --stacktrace
+        env:
+          OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+          OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+          SIGN_KEY: ${{ secrets.SIGN_KEY }}
+          SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
+          SIGN_PASSWORD: ${{ secrets.SIGN_PASSWORD }}
