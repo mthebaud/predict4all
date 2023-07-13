@@ -1,0 +1,33 @@
+name: ci-predict4all-publish
+
+on: workflow_dispatch
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      
+      - name : Add +X on Gradle scripts
+        run: chmod +x lifecompanion-framework/gradlew & chmod +x lifecompanion/gradlew
+                            
+      - name: Call update build and publish command
+        uses: gradle/gradle-build-action@v2
+        with:
+          build-root-directory: predict4all-core
+          arguments: |
+            clean build publish
+            --stacktrace
+          env:
+            OSSRH_USERNAME: ${{secrets.OSSRH_USERNAME}}
+            OSSRH_TOKEN: ${{secrets.OSSRH_TOKEN}}
+            SIGN_KEY: ${{secrets.SIGN_KEY}}
+            SIGN_KEY_ID: ${{secrets.SIGN_KEY_ID}}
+            SIGN_PASSWORD: ${{secrets.SIGN_PASSWORD}}
