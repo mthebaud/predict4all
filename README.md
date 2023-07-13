@@ -301,7 +301,16 @@ This project was developed various NLP techniques (mainly ngram based)
 
 ## Note for dev.
 
-Predict4All is built using Github actions fired with a git tag for its current version.
-It uses the [legacy Sonatype website](https://oss.sonatype.org/#nexus-search;quick~predict4all).
+Predict4All is built using Github actions to publish new versions on Maven Central
 
-To create and publish a release, tag the repository with a new version (tag should be the version number) and manually trigger the **ci-predict4all-publish** workflow.
+To create a version
+1. Build it locally and check that tests are still valid
+1. Check for the target version in [build.gradle](build.gradle)
+1. Tag the repo with this version and push to Github
+1. Run the workflow : [ci-predict4all-publish](https://github.com/mthebaud/predict4all/actions/workflows/ci-predict4all-publish.yml)
+1. Connect to the [legacy Sonatype website](https://oss.sonatype.org/#stagingRepositories)
+1. Select the corresponding matching repository
+1. Press on *Close* to release or *Drop* to cancel
+1. If *Close* is selected, you have to wait for the validation rules to run, and then select *Release* to deploy the version
+
+[Reference document on publishing](https://central.sonatype.org/publish/release/#a-complete-example-pom)
