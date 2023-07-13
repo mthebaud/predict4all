@@ -26,8 +26,8 @@ jobs:
             clean build publish
             --stacktrace
           env:
-            OSSRH_USERNAME: ${{secrets.OSSRH_USERNAME}}
-            OSSRH_TOKEN: ${{secrets.OSSRH_TOKEN}}
-            SIGN_KEY: ${{secrets.SIGN_KEY}}
-            SIGN_KEY_ID: ${{secrets.SIGN_KEY_ID}}
-            SIGN_PASSWORD: ${{secrets.SIGN_PASSWORD}}
+            OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+            OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+            SIGN_KEY: ${{ secrets.SIGN_KEY }}
+            SIGN_KEY_ID: ${{ secrets.SIGN_KEY_ID }}
+            SIGN_PASSWORD: ${{ secrets.SIGN_PASSWORD }}
