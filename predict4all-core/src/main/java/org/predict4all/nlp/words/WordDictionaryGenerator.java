@@ -105,6 +105,10 @@ public class WordDictionaryGenerator {
 
             // Save dictionary file
             LOGGER.info("Will save word dictionary to {}", dictionaryOuputFile);
+            File parentFile = dictionaryOuputFile.getParentFile();
+            if (parentFile != null && !parentFile.exists()) {
+                parentFile.mkdirs();
+            }
             try (WordFileOutputStream wfos = new WordFileOutputStream(dictionaryOuputFile)) {
                 Collection<Word> words = generatedWordDictionary.getAllWords();
                 wfos.writeUTF(dictionaryID);

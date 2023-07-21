@@ -49,6 +49,8 @@ Predict4All is supported by [Fondation Paul Bennetot](https://www.fondationpaulb
 
 This project has been integrated in the following AAC software : [LifeCompanion](http://lifecompanionaac.org/), Sibylle, CiviKey
 
+The project is still developed in [AAC4ALL project](https://aac4all.org/).
+
 ## Usage
 
 ### Installation
@@ -277,8 +279,6 @@ Alternatively, you can check **LanguageDataModelTrainer** in **predict4all-model
 Please let us know if you use Predict4All !
 
 Feel free to fill an [issue](https://github.com/mthebaud/predict4all/issues) if you need assistance or if you find a bug.
-
-If you want, you can tag you question with "predict4all" on [StackOverflow](https://stackoverflow.com/questions/tagged/predict4all)
 
 ## Licence
 
