@@ -45,6 +45,9 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
 
+import static org.predict4all.nlp.trainer.step.TrainingStep.SEMANTIC_DICTIONARY;
+import static org.predict4all.nlp.trainer.step.TrainingStep.WORDS_DICTIONARY;
+
 /**
  * To generate a {@link SemanticDictionary} from an input corpus.<br>
  * This creates a term x term matrix and then reduces it with SVD (via an optimized R script, "Rscript" should be available in path).
@@ -76,6 +79,7 @@ public class SemanticDictionaryGenerator {
         if (!this.stopWordDictionary.isInitialized()) {
             this.stopWordDictionary.initialize(wordDictionary);
         }
+
     }
 
     public void executeLSATrainingForR(TrainingCorpus corpus, File lsaOutputFile, Consumer<List<? extends TrainerTask>> blockingTaskExecutor)
@@ -96,7 +100,7 @@ public class SemanticDictionaryGenerator {
         LOGGER.info("Count matrix initiliazed, will now start counting");
         int windowSize = trainingConfiguration.getLsaWindowSize() % 2 == 0 ? trainingConfiguration.getLsaWindowSize() + 1
                 : trainingConfiguration.getLsaWindowSize();
-        blockingTaskExecutor.accept(corpus.getDocuments(TrainingStep.SEMANTIC_DICTIONARY).stream()
+        blockingTaskExecutor.accept(corpus.getDocuments(SEMANTIC_DICTIONARY).stream()
                 .map(d -> new FillCountMatrixTask(progressIndicator, d, windowSize, windowSize / 2, rowIndexes, columnIndexes, countMap))
                 .collect(Collectors.toList()));
         LOGGER.info("Matrix filled, filling percentage is {}%", 100.0 * (1.0 * countMap.size()) / (1.0 * rowIndexes.size() * columnIndexes.size()));
@@ -298,15 +302,19 @@ public class SemanticDictionaryGenerator {
         final ConcurrentHashMap<Integer, LongAdder> wordCounts = new ConcurrentHashMap<>(
                 (int) (trainingConfiguration.getLsaWindowSize() * trainingConfiguration.getLsaFrequentWordSize() * 1.05), 0.95f,
                 Runtime.getRuntime().availableProcessors());
-        blockingTaskExecutor.accept(corpus.getDocuments(TrainingStep.SEMANTIC_DICTIONARY).stream()
+
+        blockingTaskExecutor.accept(corpus.getDocuments(SEMANTIC_DICTIONARY).stream()
                 .map(d -> new CountWordTask(wordCounts, progressIndicator, d)).collect(Collectors.toList()));
-        LOGGER.info("Word count created, found {} differents words, will now sort ", wordCounts.size());
+        LOGGER.info("List Word count created, found {} differents words, will now sort ",wordCounts.size());
+
 
         // Sort to get the most frequent words
         final List<Pair<Integer, Integer>> wordOrdered = new ArrayList<>();
         wordCounts.forEach((id, count) -> wordOrdered.add(Pair.of(id, count.intValue())));
         wordCounts.clear();
         Collections.sort(wordOrdered, (p1, p2) -> Integer.compare(p2.getRight(), p1.getRight()));
+        LOGGER.info("Word count created, found {} differents words, will now sort ", wordOrdered.size());
+
         return wordOrdered;
     }
 
@@ -364,7 +372,8 @@ public class SemanticDictionaryGenerator {
         if (!token.isSeparator()) {
             final int wordId = token.getWordId(wordDictionary);
             if (wordId != Tag.UNKNOWN.getId() && !stopWordDictionary.containsWord(wordId)) {
-                return wordId;
+                    return wordId;
+
             }
         }
         return -1;
@@ -430,7 +439,9 @@ public class SemanticDictionaryGenerator {
                     token = token.getNext(tokenFis);
                     progressIndicator.increment();
                 }
+
             }
+
         }
     }
 

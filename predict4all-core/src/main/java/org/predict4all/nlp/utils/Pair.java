@@ -18,7 +18,7 @@ public class Pair<K, T> {
     private final K left;
     private final T right;
 
-    private Pair(K left, T right) {
+    public Pair(K left, T right) {
         super();
         this.left = left;
         this.right = right;

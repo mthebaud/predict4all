@@ -96,7 +96,7 @@ public class TrainingConfiguration {
     private int lsaFrequentWordSize = 5_000;
 
     @Expose
-    private int lsaVocabularySize = 80_000;
+    private int lsaVocabularySize = 90_000;
 
     @Expose
     private int lsaTargetSvdSize = 200;

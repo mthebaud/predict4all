@@ -16,18 +16,16 @@ package org.predict4all.nlp.semantic;
 
 import gnu.trove.map.hash.TIntDoubleHashMap;
 import gnu.trove.map.hash.TIntIntHashMap;
+import org.predict4all.nlp.parser.token.Token;
 import org.predict4all.nlp.prediction.model.AbstractPredictionToCompute;
 import org.predict4all.nlp.utils.Pair;
 import org.predict4all.nlp.utils.SingleThreadDoubleAdder;
+import org.predict4all.nlp.words.WordDictionary;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
+import java.io.*;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 /**
@@ -190,5 +188,247 @@ public class SemanticDictionary {
         }
     }
     //========================================================================
+    // NEW ADDED METHODS TO INTEGRATE SEMANTIC (By C. BEN KHELIL)
+    //========================================================================
+    /**
+     * method used to display the predicted words and their scores on the LSA side.
+     * @param semanticPredictions
+     * @param ksr
+     */
+    public static void displaySemanticPredictions(List<Pair<String, Double>> semanticPredictions, int ksr) {
+        System.out.println("Top Semantic Predictions:");
+            // Sort the list based on scores in descending order
+            Collections.sort(semanticPredictions, Comparator.comparing(Pair::getRight, Comparator.reverseOrder()));
+
+            int count = 0;
+            for (Pair<String, Double> pair : semanticPredictions) {
+                if (count < ksr) {
+                    System.out.println("Word: " + pair.getLeft() + ", Score: " + pair.getRight());
+                    count++;
+                } else {
+                    break; // Stop after displaying the first three
+                }
+            }
+        }
+
+    /**
+     * Method to return semantic score for the word, 0 otherwise
+     * @param semanticPredictions
+     * @param word
+     * @return
+     */
+    public static double findSemanticScore(List<Pair<String, Double>> semanticPredictions, String word) {
+        for (Pair<String, Double> pair : semanticPredictions) {
+            if (pair.getLeft().equals(word)) {
+                return pair.getRight();
+            }
+        }
+        return 0.0; // Return 0 if no semantic score is found for the word
+    }
+
+    /**
+     * This two following methods can be used to implement your own logic to determine if a word is meaningful for the context.
+     * @param tokens
+     * @return
+     */
+    public static List<String> extractMeaningfulWords(List<Token> tokens) {
+        List<String> meaningfulWords = new ArrayList<>();
+        for (Token token : tokens) {
+            String word = token.getText();
+
+            // Implement your own logic to determine if a word is meaningful
+            // You can use dictionary-based approaches, language models, or other techniques
+            if (isWordMeaningful(word)) {
+                meaningfulWords.add(word);
+            }
+        }
+        return meaningfulWords;
+    }
+
+    /**
+     * @param word
+     * @return
+     */
+    private static boolean isWordMeaningful(String word) {
+        // This is just a basic example, you can modify it to suit your needs
+        return word.length() >1;
+    }
+
+    /**
+     * Method to filter the prediction list to keep only the words common between the n-gram dictionary and those of the LSA.
+     * A file containing the uncommon words will be generated.
+     * @param predictions
+     * @param semanticPredictions
+     * @param dictionary
+     * @return
+     */
+    public static List<AbstractPredictionToCompute>  filterPredictions(List<AbstractPredictionToCompute> predictions,List<Pair<String,Double>> semanticPredictions, WordDictionary dictionary) {
+        List<AbstractPredictionToCompute> filteredPredictions = new ArrayList<>();
+        List<AbstractPredictionToCompute> stopWords = new ArrayList<>();
+        for (AbstractPredictionToCompute prediction : predictions) {
+            boolean found =false;
+            String wordPredicted = String.valueOf(dictionary.getWord(prediction.getWordId()));
+            for (Pair<String, Double> semanticPrediction : semanticPredictions) {
+                String word = semanticPrediction.getLeft();
+                if (word.equals(wordPredicted)) {
+                    filteredPredictions.add(prediction);
+                    found=true;
+                    break; // Move on to the next prediction
+                }
+            }
+            if (!found)
+                stopWords.add(prediction);
+        }
+
+        // to generate file containing stopwords
+        String filePath = "stopwords.txt";
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
+            for (AbstractPredictionToCompute word : stopWords) {
+                writer.write(String.valueOf(dictionary.getWord(word.getWordId())));
+                writer.newLine();
+            }
+            System.out.println("Words written to stopwords.txt successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to stopwords.txt: " + e.getMessage());
+        }
+
+
+        return filteredPredictions;
+    }
+
+    /**
+     * Method that calculates the geometric interpolation between n-gram predictions and LSA.
+     * @param predictions
+     * @param semanticPredictions
+     * @return
+     */
+    public static List<Pair<String, Double>> geometric_interpolation(List<AbstractPredictionToCompute> predictions, List<Pair<String,Double>> semanticPredictions) {
+        //if we want to filter predictions and generate file containing words that do not exist in the dictionary
+        //predictions=filterPredictions(predictions,semanticPredictions,dictionary);
+        List<Pair<String, Double>> interpolatedList = new ArrayList<>();
+        for (AbstractPredictionToCompute prediction : predictions) {
+            String word = prediction.getPrediction();
+            double score = prediction.getScore();
+            // Find the corresponding semantic prediction for the word
+            double semanticScore = findSemanticScore(semanticPredictions, word);
+
+            double interpolatedScore = score * semanticScore;
+
+            // Check if the word exists in the interpolatedList
+            boolean wordExists = false;
+            for (Pair<String, Double> pair : interpolatedList) {
+                if (pair.getLeft().equals(word)) {
+                    pair = Pair.of(pair.getLeft(), pair.getRight() * interpolatedScore);
+                    wordExists = true;
+                    break;
+                }
+            }
+            // If the word doesn't exist, add it to the interpolatedList
+            if (!wordExists) {
+                interpolatedList.add(Pair.of(word, interpolatedScore));
+            }
+        }
+
+        // Calculate the sum of all scores
+        double sum = 0.0;
+        for (Pair<String, Double> pair : interpolatedList) {
+            double score = pair.getRight();
+            sum += score;
+        }
+
+        List<Pair<String, Double>> normalizedList = new ArrayList<>();
+        Map<String, Boolean> keyExists = new HashMap<>(); // Map to track whether key exists
+
+        for (Pair<String, Double> pair : interpolatedList) {
+            String key = pair.getLeft();
+            double score = pair.getRight();
+            double normalizedScore = score / sum;
+
+            // Check if the key exists in the map
+            if (!keyExists.containsKey(key)) {
+                keyExists.put(key, true); // Add key to map
+                normalizedList.add(new Pair<>(key, normalizedScore)); // Add the normalized pair
+            }
+        }
+
+        /*
+        // if we want to display the list:
+        System.out.println("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* After interpolation normalization    -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+        normalizedList.stream().sorted((p1,p2)->Double.compare(p2.getRight(),p1.getRight())).limit(5).forEach(
+                p -> System.out.println(p.getLeft()+" : "+p.getRight()));
+        System.out.println("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* End interpolation normalization    -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+         */
+
+        //return interpolatedList;
+        return normalizedList;
+    }
+
+    /**
+     * Method that calculates the Linear interpolation between n-gram predictions and LSA
+     * @param predictions
+     * @param semanticPredictions
+     * @return
+     */
+    public static List<Pair<String, Double>> linear_interpolation(List<AbstractPredictionToCompute> predictions,List<Pair<String,Double>> semanticPredictions){
+        //if we want to filter predictions and generate file containing words that do not exist in the dictionary
+        //predictions=filterPredictions(predictions,semanticPredictions,dictionary);
+        List<Pair<String, Double>> interpolatedList = new ArrayList<>();
+        for (AbstractPredictionToCompute prediction : predictions) {
+            String word = prediction.getPrediction();
+            double score = prediction.getScore();
+            // Find the corresponding semantic prediction for the word
+            double semanticScore = findSemanticScore(semanticPredictions, word);
+
+            double interpolatedScore = score + semanticScore;
+
+            // Check if the word exists in the interpolatedList
+            boolean wordExists = false;
+            for (Pair<String, Double> pair : interpolatedList) {
+                if (pair.getLeft().equals(word)) {
+                    pair = Pair.of(pair.getLeft(), pair.getRight() * interpolatedScore);
+                    wordExists = true;
+                    break;
+                }
+            }
+
+            // If the word doesn't exist, add it to the interpolatedList
+            if (!wordExists) {
+                interpolatedList.add(Pair.of(word, interpolatedScore));
+            }
+        }
+
+        // Calculate the sum of all scores
+        double sum = 0.0;
+        for (Pair<String, Double> pair : interpolatedList) {
+            double score = pair.getRight();
+            sum += score;
+        }
+
+        List<Pair<String, Double>> normalizedList = new ArrayList<>();
+        Map<String, Boolean> keyExists = new HashMap<>(); // Map to track whether key exists
+
+        for (Pair<String, Double> pair : interpolatedList) {
+            String key = pair.getLeft();
+            double score = pair.getRight();
+            double normalizedScore = score / sum;
+
+            // Check if the key exists in the map
+            if (!keyExists.containsKey(key)) {
+                keyExists.put(key, true); // Add key to map
+                normalizedList.add(new Pair<>(key, normalizedScore)); // Add the normalized pair
+            }
+        }
+
+        /*
+        // if we want to display the list:
+        System.out.println("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* After interpolation normalization    -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+        normalizedList.stream().sorted((p1,p2)->Double.compare(p2.getRight(),p1.getRight())).limit(5).forEach(
+                p -> System.out.println(p.getLeft()+" : "+p.getRight()));
+        System.out.println("-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* End interpolation normalization    -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*");
+         */
+
+        //return interpolatedList;
+        return normalizedList;
+    }
 
 }

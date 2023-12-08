@@ -14,9 +14,14 @@
 
 package org.predict4all.nlp.prediction;
 
+import gnu.trove.map.hash.TIntDoubleHashMap;
+import gnu.trove.procedure.TIntDoubleProcedure;
 import org.predict4all.nlp.Separator;
+import org.predict4all.nlp.language.LanguageModel;
+import org.predict4all.nlp.language.french.FrenchLanguageModel;
 import org.predict4all.nlp.ngram.NGramWordPredictorUtils;
 import org.predict4all.nlp.ngram.dictionary.AbstractNGramDictionary;
+import org.predict4all.nlp.ngram.dictionary.StaticNGramTrieDictionary;
 import org.predict4all.nlp.ngram.trie.AbstractNGramTrieNode;
 import org.predict4all.nlp.ngram.trie.DynamicNGramTrieNode;
 import org.predict4all.nlp.parser.Tokenizer;
@@ -25,6 +30,8 @@ import org.predict4all.nlp.parser.token.Token;
 import org.predict4all.nlp.prediction.model.AbstractPredictionToCompute;
 import org.predict4all.nlp.prediction.model.DoublePredictionToCompute;
 import org.predict4all.nlp.prediction.model.UniquePredictionToCompute;
+import org.predict4all.nlp.semantic.SemanticDictionary;
+import org.predict4all.nlp.semantic.SemanticDictionaryConfiguration;
 import org.predict4all.nlp.trainer.configuration.TrainingConfiguration;
 import org.predict4all.nlp.utils.BiIntegerKey;
 import org.predict4all.nlp.utils.Pair;
@@ -45,6 +52,9 @@ import java.text.DecimalFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static org.predict4all.nlp.P4ATempConfig.DATA_SEMANTIC;
+import static org.predict4all.nlp.semantic.SemanticDictionary.*;
+
 /**
  * Main entry point of PREDICT4ALL API.<br>
  * Instance of {@link WordPredictor} can predict next words, current word ends and even current corrections.<br>
@@ -62,13 +72,16 @@ public class WordPredictor {
 
     private static final DecimalFormat DEBUG_DF = new DecimalFormat("0.0000");
     private static final int WANTED_COUNT_FACTOR = 3;
+    private static final int SEM_MIN =5;
+    private static final int SEM_MAX = 50;
+
     private static final Set<Integer> EMPTY_INT_SET = new HashSet<Integer>(1) {
         @Override
         public boolean contains(Object o) {
             return false;
         }
     };
-    private static final int NGRAM_MAX_LAST_TEXT_LENGTH = 70;
+    private static final int NGRAM_MAX_LAST_TEXT_LENGTH = 10000;
 
     private static final TrainingConfiguration configuration = TrainingConfiguration.defaultConfiguration();
 
@@ -303,6 +316,8 @@ public class WordPredictor {
      * @throws Exception
      */
     private WordPredictionResult _predict(String textBeforeCaret, String textAfterCaret, int wantedCount, Set<Integer> wordIdsToExclude) throws Exception {
+        List<WordPrediction> wordPredictions=null;
+        List<Pair<String,Double>> semanticPredictions=null;
         if (predictionParameter.isEnableDebugInformation()) {
             LOGGER.warn("Predictor debug is enabled, never enable this configuration in production !");
         }
@@ -341,12 +356,14 @@ public class WordPredictor {
             startDebug = System.currentTimeMillis();
             List<AbstractPredictionToCompute> predictions = transformNextWordsToPrediction(prefixForNGram, nextWords, longestMatchingWords != null,
                     wordIdsToExclude);
+
             LOGGER.debug("transformNextWordsToPrediction in {} ms", System.currentTimeMillis() - startDebug);
             startDebug = System.currentTimeMillis();
             double predSum = computeProbabilities(prefixForNGram, predictions);
             LOGGER.debug("computeProbabilities2 in {} ms", System.currentTimeMillis() - startDebug);
             startDebug = System.currentTimeMillis();
             Collections.sort(predictions);
+
             LOGGER.debug("sort in {} ms", System.currentTimeMillis() - startDebug);
 
             LOGGER.debug("Prediction prob sum before normalization = {}", predSum);
@@ -355,21 +372,33 @@ public class WordPredictor {
             // Remove prediction that have the same written text (keep the most probable)
             boolean capitalize = handleDoubleWordByCase(tokens, longestMatchingWords, predSubList);
 
+
             // Normalize prediction score (but only on returned prediction, total predictions list sum to 1, returned sum bellow 1)
-            List<WordPrediction> wordPredictions = new ArrayList<>(predSubList.size());
+                 wordPredictions = new ArrayList<>(predSubList.size());
             for (AbstractPredictionToCompute prediction : predSubList) {
                 createWordPrediction(longestMatchingWords, predSum, capitalize, wordPredictions, prediction);
             }
-
             // First generate prediction for
             long time = System.currentTimeMillis() - startTotal;
             LOGGER.debug("Prediction took {} ms ({} results)", time, predictions.size());
+            // Uncomment the following code if you want to use interpolation with the LSA (By C. BEN KHELIL).
+
+            List<String> context=extractMeaningfulWords(tokens);
+            if (SEM_MIN<=context.size()  ){
+                semanticPredictions= get_LSA(predictions,wordDictionary,context);
+                List<Pair<String, Double>>interpolations =geometric_interpolation(predSubList,semanticPredictions);
+                List<WordPrediction> inter_wordPredictions = getWordPredictions(interpolations);
+               wordPredictions=inter_wordPredictions;
+
+            }
 
             return new WordPredictionResult(null, Predict4AllUtils.countEndUntilNextSeparator(textAfterCaret), wordPredictions);
         } else {
             return new WordPredictionResult(null, 0, Collections.emptyList());
         }
     }
+
+
     //========================================================================
 
 
@@ -496,8 +525,6 @@ public class WordPredictor {
                 prediction.getDebugInformation() != null ? prediction.getDebugInformation().toString() : null));//TODO : should take two word id if it's a double word prediction
     }
     // ========================================================================
-
-
     // WORDS TO PREDICT
     //========================================================================
     private Map<BiIntegerKey, NextWord> getNextWords(int wantedCount, Set<Integer> wordIdsToExclude, WordPrefixDetected longestMatchingWords, final int[] prefixForNGram) throws IOException {
@@ -628,6 +655,79 @@ public class WordPredictor {
         return sentences;
     }
     //========================================================================
+//========================================================================
+// FOR SEMANTIC INTERPOLATION (By C. BEN KHELIL)
+//========================================================================
 
+    /**
+      This method creates a list of WordPrediction objects based on the data from each pair in the input 'interpolations' list.
+     * @param interpolations
+     * @return
+     */
+    private static List<WordPrediction> getWordPredictions(List<Pair<String, Double>> interpolations) {
+        List<WordPrediction> inter_wordPredictions = new ArrayList<>(interpolations.size());
+        for (Pair<String, Double> pair : interpolations) {
+            WordPrediction wordPrediction = new WordPrediction(
+                    pair.getLeft(),        // String
+                    "",                    // String
+                    true,                  // boolean
+                    pair.getRight(),       // double
+                    0,                     // int
+                    true,                  // boolean
+                    0,                     // int
+                    ""                    // String
+            );
+            inter_wordPredictions.add(wordPrediction);
+        }
+        return inter_wordPredictions;
+    }
+
+    /**
+     * Retrieves semantic similarity scores between a given context and a list of predictions
+     * using Latent Semantic Analysis (LSA) based on a semantic dictionary.
+     *
+     * @param predictions  List of predictions to compute similarity against the context
+     * @param dictionary   WordDictionary containing word IDs for the context and predictions
+     * @param context      List of strings representing the context for similarity comparison
+     * @return             List of word-pair scores indicating semantic similarity
+     * @throws IOException If an IO error occurs while loading the semantic dictionary
+     */
+    public static List<Pair<String,Double>> get_LSA(List<AbstractPredictionToCompute> predictions, WordDictionary dictionary,List<String> context  ) throws IOException {
+        File semanticDataFile = new File(String.valueOf(DATA_SEMANTIC));
+        SemanticDictionaryConfiguration configuration = new SemanticDictionaryConfiguration() {
+            @Override
+            public double getSemanticDensityMinBound() {
+                return 0.5; // set the value for the semantic density min bound
+            }
+
+            @Override
+            public double getSemanticDensityMaxBound() {
+                return 10; // set the value for the semantic density max bound
+            }
+
+            @Override
+            public double getSemanticContrastFactor() {
+                return 4; // set the value for the semantic contrast factor
+            }
+        };
+        SemanticDictionary sem = SemanticDictionary.loadDictionary(semanticDataFile, configuration);
+        List<Integer> contextIds = context.stream().map(s -> dictionary.getWord(s).getID()).collect(Collectors.toList());
+        Pair<Double, TIntDoubleHashMap> res = sem.getSimilarityCosineFor(contextIds, predictions, configuration.getSemanticContrastFactor());
+        TIntDoubleHashMap scores = res.getRight();
+        List<Pair<String,Double>> results = new ArrayList<>();
+        scores.forEachEntry(new TIntDoubleProcedure() {
+            @Override
+            public boolean execute(int wordId, double angle) {
+                results.add(Pair.of(dictionary.getWord(wordId).getWord(),angle));
+                return true;
+            }
+        });
+        // results.stream().sorted((p1,p2)->Double.compare(p2.getRight(),p1.getRight())).limit(3).forEach(
+        //       p -> System.out.println(p.getLeft()+" = "+p.getRight()));
+        //        results.stream().sorted((p1,p2)->Double.compare(p2.getRight(),p1.getRight())).limit(10).forEach(
+        //                p -> System.out.println(p.getLeft()+" = "+p.getRight())
+        // );
+        return results;
+    }
 
 }

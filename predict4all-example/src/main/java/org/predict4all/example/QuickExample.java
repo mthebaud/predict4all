@@ -42,6 +42,7 @@ import java.util.Set;
 public class QuickExample {
     private static final File FILE_NGRAMS = new File("fr_ngrams.bin");
     private static final File FILE_WORDS = new File("fr_words.bin");
+    private static final File FILE_SEM= new File("fr_semantic.bin");
 
     public static void main(String[] args) throws Exception {
         System.out.println(FILE_NGRAMS.getAbsolutePath());
@@ -50,12 +51,12 @@ public class QuickExample {
 
         WordDictionary dictionary = WordDictionary.loadDictionary(languageModel, FILE_WORDS);
         try (StaticNGramTrieDictionary ngramDictionary = StaticNGramTrieDictionary.open(FILE_NGRAMS)) {
-            showOptimizedWordPrediction(predictionParameter, dictionary, ngramDictionary);
+         //   showOptimizedWordPrediction(predictionParameter, dictionary, ngramDictionary);
             showSimpleNextWordPrediction(predictionParameter, dictionary, ngramDictionary);
-            showCurrentWordPrediction(predictionParameter, dictionary, ngramDictionary);
-            showCorrectionWordPrediction(predictionParameter, dictionary, ngramDictionary);
-            showDynamicUserModel(predictionParameter, dictionary, ngramDictionary);
-            disableUserWord(predictionParameter, dictionary, ngramDictionary);
+            //showCurrentWordPrediction(predictionParameter, dictionary, ngramDictionary);
+            //showCorrectionWordPrediction(predictionParameter, dictionary, ngramDictionary);
+            //showDynamicUserModel(predictionParameter, dictionary, ngramDictionary);
+            //disableUserWord(predictionParameter, dictionary, ngramDictionary);
         }
     }
 
@@ -71,7 +72,7 @@ public class QuickExample {
 
     private static void showSimpleNextWordPrediction(PredictionParameter predictionParameter, WordDictionary dictionary, StaticNGramTrieDictionary ngramDictionary) throws Exception {
         WordPredictor wordPredictor = new WordPredictor(predictionParameter, dictionary, ngramDictionary);
-        WordPredictionResult predictionResult = wordPredictor.predict("j'aime manger des ");
+        WordPredictionResult predictionResult = wordPredictor.predict("j'aime beaucoup manger en particulier les fruits, les patisseries, les gateaux mais ce que je mange le plus c'est le ");
         for (WordPrediction prediction : predictionResult.getPredictions()) {
             System.out.println(prediction);
         }

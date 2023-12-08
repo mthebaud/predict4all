@@ -122,7 +122,7 @@ public class WordDictionaryGenerator {
             LOGGER.info("Word dictionary saved to {}, {} words added to dictionary and saved in {} ms", dictionaryOuputFile,
                     generatedWordDictionary.size(), System.currentTimeMillis() - start);
         } else {
-            LOGGER.info("Word dictionary will not be saved because dictionaryOutputFile is null");
+            LOGGER.info("=+================= Word dictionary will not be saved because dictionaryOutputFile is null");
         }
     }
     //========================================================================

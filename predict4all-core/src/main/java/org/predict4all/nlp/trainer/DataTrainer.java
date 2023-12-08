@@ -1,6 +1,5 @@
 /*
  * Copyright 2020 - Mathieu THEBAUD
- *
  * Licensed under the Apache License, Version 2.0 (the "License")
  * you may not use this file except in compliance with the License.
  *
@@ -135,6 +134,7 @@ public class DataTrainer {
             }
 
             if (initialStep.ordinal() <= TrainingStep.WORDS_DICTIONARY.ordinal() || semantic) {
+                System.out.println(" ************************** WORDS_DICTIONARY.ordinal() || semantic **************************");
                 start = System.currentTimeMillis();
                 wordDictionaryGenerator.createWordDictionary(corpus, tasks -> executeTasksBlocking(executorService, tasks),
                         semantic ? null : outputDictionary);
@@ -142,6 +142,7 @@ public class DataTrainer {
             }
 
             if (initialStep.ordinal() <= TrainingStep.NGRAM_DICTIONARY.ordinal() && !semantic) {
+                System.out.println(" ************************** TrainingStep.NGRAM_DICTIONARY.ordinal() && !semantic **************************");
                 WordDictionary wordDictionary = WordDictionary.loadDictionary(languageModel, outputDictionary);
                 NGramDictionaryGenerator nGramDictionaryGenerator = new NGramDictionaryGenerator(languageModel, trainingConfiguration,
                         wordDictionary);
@@ -156,6 +157,7 @@ public class DataTrainer {
             }
 
             if (initialStep.ordinal() <= TrainingStep.SEMANTIC_DICTIONARY.ordinal() && semantic) {
+                System.out.println(" ************************** SEMANTIC_DICTIONARY.ordinal() && semantic **************************");
                 start = System.currentTimeMillis();
                 SemanticDictionaryGenerator lsaGenerator = new SemanticDictionaryGenerator(languageModel,
                         WordDictionary.loadDictionary(languageModel, outputDictionary), trainingConfiguration);
